@@ -131,7 +131,7 @@ class DirMngr(object):
         return input_dir
 
     def list_dirs(self) -> List[str]:
-        """List non ignored directories based on root markers."""
+        """Unique list non ignored directories based on root markers."""
         dirs = []
         base_dirs = []
         if self._base_dirs:
@@ -143,7 +143,7 @@ class DirMngr(object):
             for walked_dir in walked_dirs:
                 if not self.ignored_dirs.get(walked_dir):
                     dirs.append(walked_dir)
-        return dirs
+        return set(dirs)
 
 
 class ConfigHandler(object):
