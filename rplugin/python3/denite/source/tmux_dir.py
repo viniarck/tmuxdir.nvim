@@ -8,12 +8,12 @@ class Source(Base):
     def __init__(self, vim):
         super().__init__(vim)
 
-        self.name = "tmux_dir"
-        self.kind = "tmux_dir"
+        self.name: str = "tmux_dir"
+        self.kind: str = "tmux_dir"
         self.vim = vim
-        self.dirs = []
-        self.sort_by = "word"
-        self.sort_reversed = True
+        self.dirs: List[str] = []
+        self.sort_by: str = "word"
+        self.sort_reversed: bool = True
 
         # vim settings
         self.base_dirs: List[str] = []
