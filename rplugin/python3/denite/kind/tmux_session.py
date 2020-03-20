@@ -17,7 +17,7 @@ class Kind(Openable):
         """Switch to the first tmux selected session."""
         session_name = context["targets"][0]["__session_name"]
         try:
-            self.tmuxf.switch_session(session_name=session_name)
+            self.tmuxf.switch(session_name=session_name)
         except TmuxFacadeException as e:
             denite.util.error(self.vim, str(e))
 
@@ -33,6 +33,6 @@ class Kind(Openable):
         for item in context["targets"]:
             session_name = item["__session_name"]
             try:
-                self.tmuxf.kill_session(session_name=session_name)
+                self.tmuxf.kill(session_name=session_name)
             except TmuxFacadeException as e:
                 denite.util.error(self.vim, str(e))
