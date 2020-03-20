@@ -33,14 +33,14 @@ class Kind(Openable):
         dir_path = context["targets"][0]["word"]
         session_name = self.tmux_dir.dir_to_session_name(dir_path=dir_path)
 
-        if not self.tmux_dir.exists_session(session_name):
-            self.tmux_dir.create_session(
+        if not self.tmux_dir.sessions().get(session_name):
+            self.tmux_dir.create(
                 session_name=session_name,
                 vim_bin_path=self.vim_bin_path,
                 start_directory=dir_path,
             )
         try:
-            self.tmux_dir.switch_session(session_name=session_name)
+            self.tmux_dir.switch(session_name=session_name)
         except TmuxDirFacadeException as e:
             util.error(self.vim, str(e))
 
@@ -59,4 +59,3 @@ class Kind(Openable):
                 self.tmux_dir.ignore(input_dir=dir_path)
         except TmuxDirFacadeException as e:
             util.error(self.vim, str(e))
-
