@@ -4,10 +4,10 @@
 import os
 import pickle
 import pathlib
-from typing import Dict, List
+from typing import Dict, List, Set
 
 
-class ProjectDir(object):
+class ProjectDir:
 
     """ProjectDir."""
 
@@ -18,7 +18,14 @@ class ProjectDir(object):
         self.start_directory = start_directory
 
 
-class DirMngr(object):
+class DirMngrException(Exception):
+    def __init__(self, msg: str) -> None:
+        """Constructor of DirMngrException."""
+        self.msg = msg
+        super().__init__(msg)
+
+
+class DirMngr:
 
     """Manage Directory entries."""
 
@@ -38,33 +45,43 @@ class DirMngr(object):
         self._load_dirs()
 
     @classmethod
-    def find_dirs(cls, base_dir: str, root_markers: List[str]):
-        """Find directories with root makers given a base directory."""
+    def find_projects(
+        cls, root_dir: str, root_markers: List[str], depth=3, eager=True
+    ) -> List[str]:
+        """Find project directories given a root_dir and the depth to go through,
+        if it's not eager it's going to return early."""
+        dirs: List[str] = []
 
-        def _sanitize_dir(input_dir: str) -> str:
-            """Sanitize input_dir."""
-            if input_dir:
-                if input_dir[-1] == os.path.sep:
-                    return input_dir[:-1]
+        def _remove_path_sep(input_dir: str) -> str:
+            """Remove path separator."""
+            if input_dir[-1] == os.path.sep:
+                return input_dir[:-1]
+            return input_dir
 
-        dirs = []
-        for marker in root_markers:
-            # non recursively first.
-            f_dirs = pathlib.Path(os.path.expanduser(base_dir)).glob("*" + marker)
-            for fdir in f_dirs:
-                dir_name = str(fdir).split(marker)[0]
-                dir_name = _sanitize_dir(dir_name)
-                dirs.append(dir_name)
-            else:
-                # glob recursively
-                f_dirs = pathlib.Path(os.path.expanduser(base_dir)).glob(
-                    "*" + os.path.sep + "*" + marker
+        def _find_projects(
+            dirs: List[str],
+            root_dir: str,
+            root_markers: List[str],
+            depth=3,
+            cur_depth=1,
+        ) -> List[str]:
+            """Recursively find projects."""
+            for marker in root_markers:
+                expr = "{}{}{}".format(
+                    (cur_depth - 1) * "*{}".format(os.path.sep), "*", marker
                 )
-                for fdir in f_dirs:
-                    dir_name = str(fdir).split(marker)[0]
-                    dir_name = _sanitize_dir(dir_name)
-                    dirs.append(dir_name)
-        return dirs
+                for d in pathlib.Path(os.path.expanduser(root_dir)).glob(expr):
+                    dirs.append(os.path.sep.join(str(d).split(os.path.sep)[:-1]))
+            if cur_depth == depth:
+                return dirs
+            else:
+                if dirs and not eager:
+                    return dirs
+                return _find_projects(
+                    dirs, root_dir, root_markers, depth, cur_depth + 1
+                )
+
+        return _find_projects(dirs, _remove_path_sep(root_dir), root_markers, depth)
 
     def _load_dirs(self) -> None:
         """Load persisted dirs."""
@@ -75,24 +92,35 @@ class DirMngr(object):
             if dirs.get(self._IGNORED_DIRS_KEY):
                 self.ignored_dirs = dirs[self._IGNORED_DIRS_KEY]
 
-    def _save_dirs(self):
+    def _save_dirs(self) -> None:
         """Save all dirs."""
         dirs = {self._DIRS_KEY: self.dirs, self._IGNORED_DIRS_KEY: self.ignored_dirs}
         self.cfg_handler.save(dirs=dirs)
 
-    def add(self, input_dir: str) -> bool:
-        """Add a directory.
+    def add(self, input_dir: str) -> List[str]:
+        """Add a project directory idempotently."""
 
-        Return true if suceeded, false otherwise."""
+        return [
+            self._add(directory)
+            for directory in self.find_projects(input_dir, self._root_markers)
+        ]
+
+    def bookmark(self, input_dir: str) -> str:
+        """Bookmark a directory idempotently."""
+        return self._add(input_dir)
+
+    def _add(self, input_dir: str) -> str:
+        """Statically add a directory idempotently."""
+
         input_dir = os.path.expanduser(input_dir)
         if not os.path.isdir(input_dir):
-            return False
+            raise DirMngrException("'{}' isn't a directory.".format(input_dir))
         if self.dirs.get(input_dir):
-            return True
+            return input_dir
 
         self.dirs[input_dir] = input_dir
         self._save_dirs()
-        return True
+        return input_dir
 
     def ignore(self, input_dir: str) -> bool:
         """Ignore a directory.
@@ -105,123 +133,63 @@ class DirMngr(object):
         self._save_dirs()
         return True
 
-    def clear_ignore(self) -> bool:
-        """No longer ignore files."""
+    def clear_ignored_dirs(self) -> bool:
+        """Clear all ignored dirs."""
         self.ignored_dirs = {}
         self._save_dirs()
         return True
 
-    def clear_extra_dirs(self) -> bool:
-        """Clear all extra added dirs."""
+    def clear_bookmarked_dirs(self) -> bool:
+        """Clear all bookmarked dirs."""
         self.dirs = {}
         self._save_dirs()
         return True
 
-    def clear_all(self) -> None:
-        """Clear both extra added dirs and ignored dirs."""
-        self.clear_extra_dirs()
-        self.clear_ignore()
+    def clear_all(self) -> bool:
+        """Clear both bookmarked dirs and ignored dirs."""
+        self.clear_bookmarked_dirs()
+        self.clear_ignored_dirs()
         return True
-
-    def _sanitize_dir(self, input_dir: str) -> str:
-        """Sanitize input_dir."""
-        if input_dir:
-            if input_dir[-1] == os.path.sep:
-                return input_dir[:-1]
-        return input_dir
 
     def list_dirs(self) -> List[str]:
         """Unique list non ignored directories based on root markers."""
-        dirs = []
         base_dirs = []
         if self._base_dirs:
             base_dirs.extend(self._base_dirs)
         if self.dirs:
             base_dirs.extend(self.dirs.keys())
+        dirs: Set[str] = set()
         for input_dir in base_dirs:
-            walked_dirs = DirMngr.find_dirs(input_dir, self._root_markers)
-            for walked_dir in walked_dirs:
+            for walked_dir in DirMngr.find_projects(input_dir, self._root_markers):
                 if not self.ignored_dirs.get(walked_dir):
-                    dirs.append(walked_dir)
-        return set(dirs)
+                    dirs.add(walked_dir)
+        return list(dirs)
 
 
-class ConfigHandler(object):
+class ConfigHandler:
 
     """ConfigHandler responsible for configuration serialization."""
 
-    _config_name = "dirs.pickle"
-    _config_folder = os.path.expanduser("~/.config/tmuxdir")
-    _config_path = os.path.join(_config_folder, _config_name)
-    os.makedirs(_config_folder, exist_ok=True)
+    def __init__(
+        self, file_name="dirs.pickle", folder_name="~/.config/tmuxdir"
+    ) -> None:
+        self._file_name = file_name
+        self._default_folder = folder_name
+        self._folder = os.path.expanduser(
+            os.environ.get("TMUXDIR_CONFIG_FOLDER", self._default_folder)
+        )
+        self._full_path = os.path.join(self._folder, self._file_name)
 
-    @classmethod
-    def load(cls):
+    def load(self):
         """Load persisted directories."""
         try:
-            with open(cls._config_path, "rb") as handle:
+            os.makedirs(self._folder, exist_ok=True)
+            with open(self._full_path, "rb") as handle:
                 return pickle.load(handle)
         except FileNotFoundError:
             return {}
 
-    @classmethod
-    def save(cls, dirs: Dict[str, str]):
+    def save(self, dirs: Dict[str, Dict[str, str]]):
         """Serialize directories on file system."""
-        with open(cls._config_path, "wb") as handle:
+        with open(self._full_path, "wb") as handle:
             pickle.dump(dirs, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-
-def test_first_save():
-    data = {"dirs": {"/tmp": "/tmp"}, "ignored_dirs": {}}
-    ConfigHandler.save(data)
-    loaded = ConfigHandler.load()
-    assert loaded == data
-
-
-def test_add_dir():
-    dirs = ConfigHandler.load()
-    dir_mngr = DirMngr([], [".git"])
-
-    new_folder = "/tmp"
-    dirs[dir_mngr._DIRS_KEY][new_folder] = new_folder
-    # new_folder must exist
-    assert dir_mngr.add(new_folder)
-    assert dir_mngr.dirs.keys() == dirs[dir_mngr._DIRS_KEY].keys()
-
-
-def test_add_dir_list():
-    marker = ".git"
-    dir_mngr = DirMngr([], [marker])
-
-    new_folder = "/tmp"
-    assert dir_mngr.add(new_folder)
-    os.makedirs(os.path.join(new_folder, marker), exist_ok=True)
-    assert new_folder in dir_mngr.list_dirs()
-
-
-def test_add_ignore():
-    dir_mngr = DirMngr([], [".git"])
-    new_folder = "/tmp"
-    assert dir_mngr.add(new_folder)
-    assert dir_mngr.ignore(new_folder)
-    assert dir_mngr.ignored_dirs[new_folder] == new_folder
-    assert new_folder not in dir_mngr.list_dirs()
-
-
-def test_clear_ignore():
-    dir_mngr = DirMngr([], [".git"])
-    new_folder = "/tmp"
-    assert dir_mngr.add(new_folder)
-    assert dir_mngr.ignore(new_folder)
-    dir_mngr.clear_ignore()
-    assert dir_mngr.ignored_dirs == {}
-    assert ConfigHandler.load()[dir_mngr._IGNORED_DIRS_KEY] == {}
-
-
-def test_clear_extra_dirs():
-    dir_mngr = DirMngr([], [".git"])
-    new_folder = "/tmp"
-    assert dir_mngr.add(new_folder)
-    dir_mngr.clear_extra_dirs()
-    assert dir_mngr.dirs == {}
-    assert ConfigHandler.load()[dir_mngr._DIRS_KEY] == {}
