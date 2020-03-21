@@ -16,12 +16,8 @@ class Kind(Openable):
         if self.has_nvim:
             self.vim_bin_path = "nvim"
         try:
-            self.root_markers: List[str] = [".git"]
-            if int(self.vim.command_output("echo exists('g:tmuxdir_root_markers')")):
-                self.root_markers = self.vim.eval("g:tmuxdir_root_markers")
-            self.base_dirs: List[str] = []
-            if int(self.vim.command_output("echo exists('g:tmuxdir_base_dirs')")):
-                self.base_dirs = self.vim.eval("g:tmuxdir_base_dirs")
+            self.root_markers: List[str] = self.vim.eval("TmuxdirRootMarkers()")
+            self.base_dirs: List[str] = self.vim.eval("TmuxdirBaseDirs()")
             self.tmux_dir = TmuxDirFacade(self.base_dirs, self.root_markers)
         except TmuxDirFacadeException as e:
             util.error(self.vim, str(e))

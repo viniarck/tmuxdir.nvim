@@ -16,12 +16,8 @@ class Source(Base):
         self.sort_reversed: bool = True
 
         # vim settings
-        self.base_dirs: List[str] = []
-        if int(self.vim.command_output("echo exists('g:tmuxdir_base_dirs')")):
-            self.base_dirs = self.vim.eval("g:tmuxdir_base_dirs")
-        self.root_markers: List[str] = [".git"]
-        if int(self.vim.command_output("echo exists('g:tmuxdir_root_markers')")):
-            self.root_markers = self.vim.eval("g:tmuxdir_root_markers")
+        self.root_markers: List[str] = self.vim.eval("TmuxdirRootMarkers()")
+        self.base_dirs: List[str] = self.vim.eval("TmuxdirBaseDirs()")
 
         try:
             self.tmuxf = TmuxDirFacade(self.base_dirs, self.root_markers)
