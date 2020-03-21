@@ -1,22 +1,33 @@
 import pynvim as vim
 from typing import List
 
-from tmuxdir.rplugin import TmuxDirPlugin, TmuxFacadeBinException
+from tmuxdir.rplugin import TmuxDirPlugin
+from tmuxdir.tmux_session_facade import TmuxFacadeException
 from tmuxdir.util import echoerr, expanduser_raise_if_not_dir
 
 
 @vim.plugin
 class TmuxDirRPlugin:
     def __init__(self, vim: vim.Nvim) -> None:
-        self._rplugin = TmuxDirPlugin(vim)
+
+        try:
+            self._rplugin = TmuxDirPlugin(vim)
+        except TmuxFacadeException as e:
+            echoerr(vim, str(e), "tmuxdir")
 
     @vim.function("TmuxdirCheck", sync=True)
     def check_tmux_bin(self, args: List) -> bool:
         try:
             return self._rplugin.tmux_dir._check_tmux_bin()
-        except TmuxFacadeBinException as e:
-            echoerr(str(e), self._rplugin.plugin_name)
-            return False
+        except TmuxFacadeException as e:
+            echoerr(self._rplugin.vim, str(e), self._rplugin.plugin_name)
+        except AttributeError:
+            echoerr(
+                vim,
+                "tmux not found in $PATH. Make sure tmux is installed.",
+                "tmuxdir",
+            )
+        return False
 
     @vim.function("TmuxdirAdd", sync=True)
     def tmuxdir_add(self, args: List) -> List[str]:
