@@ -33,7 +33,7 @@ class Source(Base):
 
     def gather_candidates(self, context):
         candidates = []
-        for session in self.tmuxf.list_sessions():
+        for session in self.tmuxf.sessions().values():
             word = "{:40s} ({})".format(session.name, session.created_time)
             candidates.append(
                 {

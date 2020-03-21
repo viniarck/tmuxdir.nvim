@@ -16,12 +16,8 @@ class Kind(Openable):
         if self.has_nvim:
             self.vim_bin_path = "nvim"
         try:
-            self.root_markers: List[str] = [".git"]
-            if int(self.vim.command_output("echo exists('g:tmuxdir_root_markers')")):
-                self.root_markers = self.vim.eval("g:tmuxdir_root_markers")
-            self.base_dirs: List[str] = []
-            if int(self.vim.command_output("echo exists('g:tmuxdir_base_dirs')")):
-                self.base_dirs = self.vim.eval("g:tmuxdir_base_dirs")
+            self.root_markers: List[str] = self.vim.eval("TmuxdirRootMarkers()")
+            self.base_dirs: List[str] = self.vim.eval("TmuxdirBaseDirs()")
             self.tmux_dir = TmuxDirFacade(self.base_dirs, self.root_markers)
         except TmuxDirFacadeException as e:
             util.error(self.vim, str(e))
@@ -33,14 +29,14 @@ class Kind(Openable):
         dir_path = context["targets"][0]["word"]
         session_name = self.tmux_dir.dir_to_session_name(dir_path=dir_path)
 
-        if not self.tmux_dir.exists_session(session_name):
-            self.tmux_dir.create_session(
+        if not self.tmux_dir.sessions().get(session_name):
+            self.tmux_dir.create(
                 session_name=session_name,
                 vim_bin_path=self.vim_bin_path,
                 start_directory=dir_path,
             )
         try:
-            self.tmux_dir.switch_session(session_name=session_name)
+            self.tmux_dir.switch(session_name=session_name)
         except TmuxDirFacadeException as e:
             util.error(self.vim, str(e))
 
@@ -59,4 +55,3 @@ class Kind(Openable):
                 self.tmux_dir.ignore(input_dir=dir_path)
         except TmuxDirFacadeException as e:
             util.error(self.vim, str(e))
-

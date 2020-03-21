@@ -8,20 +8,16 @@ class Source(Base):
     def __init__(self, vim):
         super().__init__(vim)
 
-        self.name = "tmux_dir"
-        self.kind = "tmux_dir"
+        self.name: str = "tmux_dir"
+        self.kind: str = "tmux_dir"
         self.vim = vim
-        self.dirs = []
-        self.sort_by = "word"
-        self.sort_reversed = True
+        self.dirs: List[str] = []
+        self.sort_by: str = "word"
+        self.sort_reversed: bool = True
 
         # vim settings
-        self.base_dirs: List[str] = []
-        if int(self.vim.command_output("echo exists('g:tmuxdir_base_dirs')")):
-            self.base_dirs = self.vim.eval("g:tmuxdir_base_dirs")
-        self.root_markers: List[str] = [".git"]
-        if int(self.vim.command_output("echo exists('g:tmuxdir_root_markers')")):
-            self.root_markers = self.vim.eval("g:tmuxdir_root_markers")
+        self.root_markers: List[str] = self.vim.eval("TmuxdirRootMarkers()")
+        self.base_dirs: List[str] = self.vim.eval("TmuxdirBaseDirs()")
 
         try:
             self.tmuxf = TmuxDirFacade(self.base_dirs, self.root_markers)
