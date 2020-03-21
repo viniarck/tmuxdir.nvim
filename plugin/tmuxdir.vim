@@ -45,7 +45,7 @@ func! TmuxdirIgnore(v)
 endfunc
 
 func! TmuxdirClearIgnored(v)
-    return s:tmuxdir.call('tmuxdir_ignored', a:v)
+    return s:tmuxdir.call('tmuxdir_clear_ignored', a:v)
 endfunc
 
 func! TmuxdirListIgnored()

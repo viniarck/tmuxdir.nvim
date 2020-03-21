@@ -41,7 +41,7 @@ class TmuxDirPlugin(object):
     def tmuxdir_list_added(self) -> List[str]:
         return list(self.tmux_dir.dirs.keys())
 
-    def tmuxdir_clear_added_dirs(self, args: List) -> bool:
+    def tmuxdir_clear_added_dirs(self) -> bool:
         return self.tmux_dir.clear_added_dirs()
 
     def tmuxdir_ignore(self, args: List) -> bool:
