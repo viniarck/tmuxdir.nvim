@@ -1,64 +1,99 @@
-import neovim
-
-from tmuxdir.tmux_session_facade import TmuxFacadeBinException
-from tmuxdir.tmuxdir_facade import TmuxDirFacade
-from tmuxdir.dirmngr import DirMngr
+import pynvim as vim
 from typing import List
 
+from tmuxdir.rplugin import TmuxDirPlugin, TmuxFacadeBinException
+from tmuxdir.util import echoerr, expanduser_raise_if_not_dir
 
-@neovim.plugin
-class TmuxDirPlugin(object):
 
-    """TmuxDirPlugin."""
+@vim.plugin
+class TmuxDirRPlugin:
+    def __init__(self, vim: vim.Nvim) -> None:
+        self._rplugin = TmuxDirPlugin(vim)
 
-    def __init__(self, nvim) -> None:
-        """Constructor of TmuxDirPlugin."""
-        self.nvim = nvim
-
-        # vim settings
-        self.root_markers: List[str] = [".git"]
-        if int(self.nvim.command_output("echo exists('g:tmuxdir_root_markers')")):
-            self.root_markers = self.nvim.eval("g:tmuxdir_root_markers")
-        self.base_dirs: List[str] = []
-        if int(self.nvim.command_output("echo exists('g:tmuxdir_base_dirs')")):
-            self.base_dirs = self.nvim.eval("g:tmuxdir_base_dirs")
-        self.dir_mngr = DirMngr(
-            base_dirs=self.base_dirs, root_markers=self.root_markers
-        )
-
-        self.tmux_dir = TmuxDirFacade(self.base_dirs, self.root_markers)
-        self.tmux_dir._check_tmux_bin()
-
-    @neovim.function("TmuxdirAdd", sync=True)
-    def tmuxdir_add(self, args: List) -> bool:
-        if len(args) > 1:
-            self.nvim.err_write("TmuxdirAdd expects a single argument")
-            return False
-        return self.tmux_dir.add(args[0])
-
-    @neovim.function("TmuxdirIgnore", sync=True)
-    def tmuxdir_ignore(self, args: List) -> bool:
-        if len(args) > 1:
-            self.nvim.err_write("TmuxdirIgnore expects a single argument")
-            return False
-        return self.tmux_dir.ignore(args[0])
-
-    @neovim.function("TmuxdirClearIgnore", sync=True)
-    def tmuxdir_clear_ignore(self, args: List) -> bool:
-        return self.tmux_dir.clear_ignore()
-
-    @neovim.function("TmuxdirClearExtraDirs", sync=True)
-    def tmuxdir_clear_extra_dirs(self, args: List) -> bool:
-        return self.tmux_dir.clear_extra_dirs()
-
-    @neovim.function("TmuxdirClear", sync=True)
-    def tmuxdir_clear(self, args: List) -> bool:
-        return self.tmux_dir.clear_all()
-
-    @neovim.function("TmuxdirCheck", sync=True)
-    def check_tmux_bin(self, args: List) -> str:
+    @vim.function("TmuxdirCheck", sync=True)
+    def check_tmux_bin(self, args: List) -> bool:
         try:
-            self.tmux_dir._check_tmux_bin()
-            return True
+            return self._rplugin.tmux_dir._check_tmux_bin()
         except TmuxFacadeBinException as e:
-            self.nvim.err_write(e.message)
+            echoerr(str(e), self._rplugin.plugin_name)
+            return False
+
+    @vim.function("TmuxdirAdd", sync=True)
+    def tmuxdir_add(self, args: List) -> List[str]:
+        if len(args) != 1:
+            echoerr(
+                self._rplugin.vim,
+                "TmuxdirAdd expects a single argument",
+                self._rplugin.plugin_name,
+            )
+            return []
+        try:
+            root_dir = expanduser_raise_if_not_dir(args[0])
+            return self._rplugin.tmux_dir.add(root_dir)
+        except OSError as e:
+            echoerr(self._rplugin.vim, str(e), self._rplugin.plugin_name)
+            return []
+
+    @vim.function("TmuxdirClearAdded", sync=True)
+    def tmuxdir_clear_added(self, args: List) -> bool:
+        if len(args) != 1:
+            echoerr(
+                self._rplugin.vim,
+                "TmuxdirClearAdded expects a single argument",
+                self._rplugin.plugin_name,
+            )
+            return False
+        try:
+            root_dir = expanduser_raise_if_not_dir(args[0])
+            return self._rplugin.tmux_dir.clear_added_dir(root_dir)
+        except OSError as e:
+            echoerr(self._rplugin.vim, str(e), self._rplugin.plugin_name)
+            return False
+
+    @vim.function("TmuxdirListAdded", sync=True)
+    def tmuxdir_list_added(self, args: List) -> List[str]:
+        return self._rplugin.tmuxdir_list_added()
+
+    @vim.function("TmuxdirClearAddedAll", sync=True)
+    def tmuxdir_clear_added_dirs(self, args: List) -> bool:
+        return self._rplugin.tmux_dir.clear_added_dirs()
+
+    @vim.function("TmuxdirIgnore", sync=True)
+    def tmuxdir_ignore(self, args: List) -> bool:
+        if len(args) != 1:
+            echoerr(
+                self._rplugin.vim,
+                "TmuxdirIgnore expects a single argument",
+                self._rplugin.plugin_name,
+            )
+            return False
+        try:
+            root_dir = expanduser_raise_if_not_dir(args[0])
+            return self._rplugin.tmux_dir.ignore(root_dir)
+        except OSError as e:
+            echoerr(self._rplugin.vim, str(e), self._rplugin.plugin_name)
+            return False
+
+    @vim.function("TmuxdirClearIgnored", sync=True)
+    def tmuxdir_clear_ignored(self, args: List) -> bool:
+        if len(args) != 1:
+            echoerr(
+                self._rplugin.vim,
+                "TmuxdirClearIgnored expects a single argument",
+                self._rplugin.plugin_name,
+            )
+            return False
+        try:
+            root_dir = expanduser_raise_if_not_dir(args[0])
+            return self._rplugin.tmux_dir.clear_ignored_dir(root_dir)
+        except OSError as e:
+            echoerr(self._rplugin.vim, str(e), self._rplugin.plugin_name)
+            return False
+
+    @vim.function("TmuxdirListIgnored", sync=True)
+    def tmuxdir_list_ignored(self, args: List) -> List[str]:
+        return self._rplugin.tmuxdir_list_ignored()
+
+    @vim.function("TmuxdirClearIgnoredAll", sync=True)
+    def tmuxdir_clear_ignored_dirs(self, args: List) -> bool:
+        return self._rplugin.tmux_dir.clear_ignored_dirs()
