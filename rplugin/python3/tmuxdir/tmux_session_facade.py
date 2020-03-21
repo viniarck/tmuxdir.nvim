@@ -7,14 +7,17 @@ from typing import List, Dict
 
 
 class TmuxFacadeException(Exception):
-    def __init__(self, message):
-        super().__init__(message)
-        self.message = message
+    def __init__(self, msg: str):
+        super().__init__(msg)
+        self.msg = msg
+
+    def __repr__(self) -> str:
+        return self.msg
 
 
 class TmuxFacadeBinException(TmuxFacadeException):
-    def __init__(self, message):
-        super().__init__(message)
+    def __init__(self, msg):
+        super().__init__(msg)
 
 
 class TmuxSession(object):
