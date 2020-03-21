@@ -3,10 +3,9 @@
 
 import pynvim as vim
 
-from tmuxdir.tmux_session_facade import TmuxFacadeBinException
-from tmuxdir.tmuxdir_facade import TmuxDirFacade
+from tmuxdir.tmuxdir_facade import TmuxDirFacade, TmuxFacadeException
 from tmuxdir.dirmngr import DirMngr
-from tmuxdir.util import echoerr, expanduser_raise_if_not_dir
+from tmuxdir.util import expanduser_raise_if_not_dir, echoerr
 from typing import List
 
 
@@ -28,7 +27,10 @@ class TmuxDirPlugin(object):
         )
 
         self.tmux_dir = TmuxDirFacade(self.base_dirs, self.root_markers)
-        self.tmux_dir._check_tmux_bin()
+        try:
+            self.tmux_dir._check_tmux_bin()
+        except TmuxFacadeException as e:
+            echoerr(self.vim, str(e), self.plugin_name)
 
     def tmuxdir_add(self, args: List) -> List[str]:
         root_dir = expanduser_raise_if_not_dir(args[0])
@@ -58,9 +60,5 @@ class TmuxDirPlugin(object):
     def tmuxdir_clear_ignored_dirs(self, args: List) -> bool:
         return self.tmux_dir.clear_ignored_dirs()
 
-    def check_tmux_bin(self, args: List) -> bool:
-        try:
-            return self.tmux_dir._check_tmux_bin()
-        except TmuxFacadeBinException as e:
-            echoerr(str(e), self.plugin_name)
-            return False
+    def check_tmux_bin(self) -> bool:
+        return self.tmux_dir._check_tmux_bin()

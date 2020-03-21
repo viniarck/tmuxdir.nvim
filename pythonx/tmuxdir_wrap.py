@@ -1,13 +1,25 @@
 import vim
 
-from tmuxdir.rplugin import TmuxDirPlugin
+from tmuxdir.rplugin import TmuxDirPlugin, TmuxFacadeException
 from tmuxdir.util import echoerr
 
-_plugin = TmuxDirPlugin(vim)
+try:
+    _plugin = TmuxDirPlugin(vim)
+except TmuxFacadeException as e:
+    echoerr(vim, str(e), "tmuxdir")
 
 
 def check_tmux_bin(*args):
-    return _plugin.check_tmux_bin(args)
+    try:
+        return _plugin.check_tmux_bin()
+    except TmuxFacadeException as e:
+        echoerr(_plugin.vim, str(e), _plugin.plugin_name)
+    except (AttributeError, NameError):
+        echoerr(
+            vim,
+            "tmux not found in $PATH. Make sure tmux is installed.",
+            "tmuxdir",
+        )
 
 
 def tmuxdir_add(*args):
