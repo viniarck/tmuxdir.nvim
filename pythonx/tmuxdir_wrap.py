@@ -1,10 +1,9 @@
 import vim
 
 from tmuxdir.rplugin import TmuxDirPlugin
+from tmuxdir.util import echoerr
 
 _plugin = TmuxDirPlugin(vim)
-
-# TODO catch exceptions.. and echoerr
 
 
 def check_tmux_bin(*args):
@@ -12,11 +11,17 @@ def check_tmux_bin(*args):
 
 
 def tmuxdir_add(*args):
-    return _plugin.tmuxdir_add(args)
+    try:
+        return _plugin.tmuxdir_add(args)
+    except OSError as e:
+        echoerr(_plugin.vim, str(e), _plugin.plugin_name)
 
 
 def tmuxdir_clear_added(*args):
-    return _plugin.tmuxdir_clear_added(args)
+    try:
+        return _plugin.tmuxdir_clear_added(args)
+    except OSError as e:
+        echoerr(_plugin.vim, str(e), _plugin.plugin_name)
 
 
 def tmuxdir_list_added(*args):
@@ -24,15 +29,21 @@ def tmuxdir_list_added(*args):
 
 
 def tmuxdir_clear_added_dirs(*args):
-    return _plugin.tmuxdir_clear_added_dirs(args)
+    return _plugin.tmuxdir_clear_added_dirs()
 
 
 def tmuxdir_ignore(*args):
-    return _plugin.tmuxdir_ignore(args)
+    try:
+        return _plugin.tmuxdir_ignore(args)
+    except OSError as e:
+        echoerr(_plugin.vim, str(e), _plugin.plugin_name)
 
 
 def tmuxdir_clear_ignored(*args):
-    return _plugin.tmuxdir_ignored(args)
+    try:
+        return _plugin.tmuxdir_clear_ignored(args)
+    except OSError as e:
+        echoerr(_plugin.vim, str(e), _plugin.plugin_name)
 
 
 def tmuxdir_list_ignored(*args):
