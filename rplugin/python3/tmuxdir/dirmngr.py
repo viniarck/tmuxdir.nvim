@@ -18,16 +18,6 @@ class ProjectDir:
         self.start_directory = start_directory
 
 
-class DirMngrException(Exception):
-    def __init__(self, msg: str) -> None:
-        """Constructor of DirMngrException."""
-        self.msg = msg
-        super().__init__(msg)
-
-    def __repr__(self) -> str:
-        return self.msg
-
-
 class DirMngr:
 
     """Manage Directory entries."""
