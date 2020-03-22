@@ -17,9 +17,13 @@ tmuxidir is a tmux session workspace plugin for nvim and vim.
 
 ## Screencast
 
-- `:Denite tmux_session`
+- `:Denite tmux_session` (with nvim)
 
-![tmux_sessions.gif](https://s5.gifyu.com/images/tmux_sessions.gif)
+![tmux_sessions_cropped.gif](https://s5.gifyu.com/images/tmux_sessions_cropped.gif)
+
+- `:Denite tmux_dir` (with vim 8+)
+
+![tmuxdir_cropped.gif](https://s5.gifyu.com/images/tmuxdir_cropped.gif)
 
 ## Installation
 
