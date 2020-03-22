@@ -49,9 +49,6 @@ class DirMngr:
         """Find project directories given a root_dir and the depth to go through,
         if it's not eager it's going to return early."""
 
-        if not os.path.isdir(root_dir):
-            return []
-
         dirs: List[str] = []
 
         def _remove_path_sep(input_dir: str) -> str:

@@ -1,7 +1,6 @@
 import denite.util as util
 from denite.source.base import Base
 from tmuxdir.tmuxdir_facade import TmuxDirFacade, TmuxDirFacadeException
-from typing import List
 
 
 class Source(Base):
@@ -11,18 +10,8 @@ class Source(Base):
         self.name: str = "tmux_dir"
         self.kind: str = "tmux_dir"
         self.vim = vim
-        self.dirs: List[str] = []
         self.sort_by: str = "word"
         self.sort_reversed: bool = True
-
-        # vim settings
-        self.root_markers: List[str] = self.vim.eval("TmuxdirRootMarkers()")
-        self.base_dirs: List[str] = self.vim.eval("TmuxdirBaseDirs()")
-
-        try:
-            self.tmuxf = TmuxDirFacade(self.base_dirs, self.root_markers)
-        except TmuxDirFacadeException as e:
-            util.error(self.vim, str(e))
 
     def highlight(self):
         self.vim.command("highlight default link {} Special".format(self.syntax_name))
@@ -31,6 +20,15 @@ class Source(Base):
         super().define_syntax()
 
     def gather_candidates(self, context):
+
+        try:
+            self.tmuxf = TmuxDirFacade(
+                base_dirs=self.vim.eval("TmuxdirBaseDirs()"),
+                root_markers=self.vim.eval("TmuxdirRootMarkers()"),
+            )
+        except TmuxDirFacadeException as e:
+            util.error(self.vim, str(e))
+
         candidates = []
         for dir_path in self.tmuxf.list_dirs():
             candidates.append({"word": dir_path})
