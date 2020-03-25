@@ -19,9 +19,9 @@ tmuxidir is a tmux session workspace plugin for nvim and vim.
 
 ## Screencast
 
-- `:Denite tmux_session` (with nvim)
+- `:Denite tmux_session` and `:Denite tmux_dir` (with nvim)
 
-![tmux_sessions_cropped.gif](https://s5.gifyu.com/images/tmux_sessions_cropped.gif)
+![tmuxdir_final2_cropped.gif](https://s5.gifyu.com/images/tmuxdir_final2_cropped.gif)
 
 - `:Denite tmux_dir` (with vim 8+)
 
@@ -29,7 +29,7 @@ tmuxidir is a tmux session workspace plugin for nvim and vim.
 
 ## Installation
 
-**Note:** tmuxdir requires [denite.nvim](https://github.com/Shougo/denite.nvim), pynvim, Neovim 0.3+ or Vim8.1+ and Python3.6+
+**Note:** tmuxdir requires [denite.nvim](https://github.com/Shougo/denite.nvim), pynvim, Neovim 0.3+ or Vim8+ and Python3.6+
 
 - If you use **dein**:
 
@@ -64,6 +64,8 @@ let g:tmuxdir_base_dirs = ['~/repos', '~/projects', '~/src'] " Set of base direc
 
 let g:tmuxdir_root_markers = ['.git'] " root markers to identify projects
 ```
+
+For more information, key bindings, and available functions, check [doc/tmuxdir.txt](doc/tmuxdir.txt) out.
 
 ## How to use
 
