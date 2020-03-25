@@ -65,6 +65,8 @@ let g:tmuxdir_base_dirs = ['~/repos', '~/projects', '~/src'] " Set of base direc
 let g:tmuxdir_root_markers = ['.git'] " root markers to identify projects
 ```
 
+For more information, key bindings, and available functions, check [doc/tmuxdir.txt](doc/tmuxdir.txt) out.
+
 ## How to use
 
 - Tmux sessions:
