@@ -26,12 +26,14 @@ class DirMngr:
         self,
         base_dirs: List[str],
         root_markers: List[str],
+        eager_mode=False,
         cfg_handler: ConfigHandler = None,
     ) -> None:
         """Constructor of DirMngr."""
         self._base_dirs: List[str] = base_dirs
         self._root_markers: List[str] = root_markers
         self._session_dirs: Dict[str, ProjectDir] = {}
+        self._eager_mode = eager_mode
 
         self._IGNORED_DIRS_KEY = "ignored_dirs"
         self._DIRS_KEY = "dirs"
@@ -44,7 +46,7 @@ class DirMngr:
         self._load_dirs()
 
     def find_projects(
-        self, root_dir: str, root_markers: List[str], depth=3, eager=True
+        self, root_dir: str, root_markers: List[str], depth=3, eager=False
     ) -> List[str]:
         """Find project directories given a root_dir and the depth to go through,
         if it's not eager it's going to return early."""
@@ -91,8 +93,7 @@ class DirMngr:
         dirs = self.cfg_handler.load()
         if dirs:
             for key, attr in zip(
-                (self._DIRS_KEY, self._IGNORED_DIRS_KEY,),
-                ("dirs", "ignored_dirs"),
+                (self._DIRS_KEY, self._IGNORED_DIRS_KEY,), ("dirs", "ignored_dirs"),
             ):
                 if dirs.get(key):
                     loaded_dirs = dirs[key]
@@ -121,7 +122,9 @@ class DirMngr:
 
         return [
             self._add(directory)
-            for directory in self.find_projects(input_dir, self._root_markers)
+            for directory in self.find_projects(
+                input_dir, self._root_markers, eager=self._eager_mode
+            )
         ]
 
     def _add(self, input_dir: str) -> str:
@@ -179,7 +182,9 @@ class DirMngr:
             base_dirs.extend(self.dirs.keys())
         dirs: Set[str] = set()
         for input_dir in base_dirs:
-            for walked_dir in self.find_projects(input_dir, self._root_markers):
+            for walked_dir in self.find_projects(
+                input_dir, self._root_markers, eager=self._eager_mode
+            ):
                 if not self.ignored_dirs.get(walked_dir):
                     dirs.add(walked_dir)
         return list(dirs)
