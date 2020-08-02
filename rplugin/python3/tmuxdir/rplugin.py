@@ -21,9 +21,12 @@ class TmuxDirPlugin(object):
         # vim settings
         self.root_markers: List[str] = self.vim.eval("TmuxdirRootMarkers()")
         self.base_dirs: List[str] = self.vim.eval("TmuxdirBaseDirs()")
+        self._eager_mode: bool = self.vim.eval("TmuxdirEagerMode()")
 
         self.dir_mngr = DirMngr(
-            base_dirs=self.base_dirs, root_markers=self.root_markers
+            base_dirs=self.base_dirs,
+            root_markers=self.root_markers,
+            eager_mode=self._eager_mode,
         )
 
         self.tmux_dir = TmuxDirFacade(self.base_dirs, self.root_markers)

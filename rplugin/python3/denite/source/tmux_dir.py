@@ -25,6 +25,7 @@ class Source(Base):
             self.tmuxf = TmuxDirFacade(
                 base_dirs=self.vim.eval("TmuxdirBaseDirs()"),
                 root_markers=self.vim.eval("TmuxdirRootMarkers()"),
+                eager_mode=self.vim.eval("TmuxdirEagerMode()"),
             )
         except TmuxDirFacadeException as e:
             util.error(self.vim, str(e))

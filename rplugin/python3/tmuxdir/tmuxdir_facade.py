@@ -28,11 +28,13 @@ class TmuxDirFacade(TmuxSessionFacade, DirMngr):
         return cls._instance
 
     def __init__(
-        self, base_dirs: List[str], root_markers: List[str] = [".git"]
+        self, base_dirs: List[str], root_markers: List[str] = [".git"], eager_mode=False
     ) -> None:
         """Constructor of TmuxDirFacade."""
         TmuxSessionFacade.__init__(self)
-        DirMngr.__init__(self, base_dirs=base_dirs, root_markers=root_markers)
+        DirMngr.__init__(
+            self, base_dirs=base_dirs, root_markers=root_markers, eager_mode=eager_mode
+        )
 
     def dir_to_session_name(self, dir_path: str) -> str:
         """Convert a directory name to tmux session name."""

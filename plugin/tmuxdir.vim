@@ -14,6 +14,14 @@ func! TmuxdirBaseDirs()
   endif
 endfunc
 
+func! TmuxdirEagerMode()
+  if exists('g:tmuxdir_eager_mode')
+    return eval('g:tmuxdir_eager_mode')
+  else
+    return v:false
+  endif
+endfunc
+
 if has('nvim')
     finish
 endif
