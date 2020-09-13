@@ -36,6 +36,10 @@ func! TmuxdirAdd(v)
     return s:tmuxdir.call('tmuxdir_add', a:v)
 endfunc
 
+func! TmuxdirAddStatic(v)
+    return s:tmuxdir.call('tmuxdir_add_static', a:v)
+endfunc
+
 func! TmuxdirClearAdded(v)
     return s:tmuxdir.call('tmuxdir_clear_added', a:v)
 endfunc

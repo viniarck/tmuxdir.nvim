@@ -127,6 +127,14 @@ class DirMngr:
             )
         ]
 
+    def add_static(self, input_dir: str) -> List[str]:
+        """Add a directory idempotently regardless of project root markers."""
+
+        if input_dir in self.ignored_dirs:
+            return []
+
+        return [self._add(input_dir)]
+
     def _add(self, input_dir: str) -> str:
         """Statically add a directory idempotently."""
 
@@ -178,9 +186,7 @@ class DirMngr:
         base_dirs = []
         if self._base_dirs:
             base_dirs.extend(self._base_dirs)
-        if self.dirs:
-            base_dirs.extend(self.dirs.keys())
-        dirs: Set[str] = set()
+        dirs: Set[str] = set(list(self.dirs))
         for input_dir in base_dirs:
             for walked_dir in self.find_projects(
                 input_dir, self._root_markers, eager=self._eager_mode

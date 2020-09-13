@@ -29,6 +29,13 @@ def tmuxdir_add(*args):
         echoerr(_plugin.vim, str(e), _plugin.plugin_name)
 
 
+def tmuxdir_static_add(*args):
+    try:
+        return _plugin.tmuxdir_add_static(args)
+    except OSError as e:
+        echoerr(_plugin.vim, str(e), _plugin.plugin_name)
+
+
 def tmuxdir_clear_added(*args):
     try:
         return _plugin.tmuxdir_clear_added(args)

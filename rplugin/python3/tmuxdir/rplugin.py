@@ -39,6 +39,10 @@ class TmuxDirPlugin(object):
         root_dir = expanduser_raise_if_not_dir(args[0])
         return self.tmux_dir.add(root_dir)
 
+    def tmuxdir_add_static(self, args: List) -> List[str]:
+        root_dir = expanduser_raise_if_not_dir(args[0])
+        return self.tmux_dir.add_static(root_dir)
+
     def tmuxdir_clear_added(self, args: List) -> bool:
         root_dir = expanduser_raise_if_not_dir(args[0])
         return self.tmux_dir.clear_added_dir(root_dir)

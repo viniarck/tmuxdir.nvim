@@ -45,6 +45,22 @@ class TmuxDirRPlugin:
             echoerr(self._rplugin.vim, str(e), self._rplugin.plugin_name)
             return []
 
+    @vim.function("TmuxdirAddStatic", sync=True)
+    def tmuxdir_add_static(self, args: List) -> List[str]:
+        if len(args) != 1:
+            echoerr(
+                self._rplugin.vim,
+                "TmuxdirAddStatic expects a single argument",
+                self._rplugin.plugin_name,
+            )
+            return []
+        try:
+            root_dir = expanduser_raise_if_not_dir(args[0])
+            return self._rplugin.tmux_dir.add_static(root_dir)
+        except OSError as e:
+            echoerr(self._rplugin.vim, str(e), self._rplugin.plugin_name)
+            return []
+
     @vim.function("TmuxdirClearAdded", sync=True)
     def tmuxdir_clear_added(self, args: List) -> bool:
         if len(args) != 1:
