@@ -14,7 +14,7 @@ tmuxidir is a tmux session workspace plugin for nvim and vim.
 
 - Denite source `tmux_session` for tmux sessions.
 - Denite source `tmux_dir` for tmux project directories.
-- Any folder can also be statically bookmarked as a project.
+- Any folder can also be statically added as a project.
 - Automatically discover new projects once a root marker is found.
 
 ## Screencast

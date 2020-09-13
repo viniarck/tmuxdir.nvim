@@ -73,17 +73,23 @@ TmuxdirAdd({arg})
 		Add an {arg} directory to the project list. As long as this folder
 		has a root marker it's going to show up in the project directories.
 
+TmuxdirAddStatic({arg})
+		Add an {arg} directory to the project list statically. It will
+		be statically added regardless of root markers
+
 
 TmuxdirClearAdded({arg})
 		Remove an {arg} directory of the project list which has been added
-		with TmuxdirAdd({arg})
+		with TmuxdirAdd({arg}) or TmuxdirAddStatic({arg})
 
 
 TmuxdirListAdded({arg})
-		List all projects folders that have been either found based on 	  		added by TmuxdirAdd({arg})
+		List all projects folders that have been either added by
+		TmuxdirAdd({arg}) or TmuxdirAddStatic({arg})
 
 TmuxdirClearAddedAll({arg})
-		Remove all added projects by TmuxdirAdd({arg}) from the project list.
+		Remove all added projects by TmuxdirAdd({arg}) or TmuxdirAddStatic({arg})
+		from the project list.
 
 TmuxdirIgnore({arg})
 		Ignore an {arg} directory of the project list. If it's ignored
