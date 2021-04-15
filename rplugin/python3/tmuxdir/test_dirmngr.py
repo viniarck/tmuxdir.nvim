@@ -80,14 +80,16 @@ class TestDirManager:
         assert dir_mngr.cfg_handler.load()[dir_mngr._IGNORED_DIRS_KEY] == {}
 
     @pytest.mark.skipif(
-        not os.path.isdir(os.path.expanduser("~/b/repos")),
+        not os.path.isdir(os.path.expanduser("~/b/repos"))
+        or not os.environ.get("TMUXDIR_BENCH", False),
         reason="~/b/repos doesn't exist",
     )
     def test_find_projects_v10_eager(self, benchmark, dir_mngr: DirMngr) -> None:
         benchmark(dir_mngr.find_projects, "~/b/repos", [".git"], 3, True)
 
     @pytest.mark.skipif(
-        not os.path.isdir(os.path.expanduser("~/b/repos")),
+        not os.path.isdir(os.path.expanduser("~/b/repos"))
+        or not os.environ.get("TMUXDIR_BENCH", False),
         reason="~/b/repos doesn't exist",
     )
     def test_find_projects_v11_not_eager(self, benchmark, dir_mngr: DirMngr) -> None:
