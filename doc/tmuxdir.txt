@@ -13,37 +13,25 @@ Release Notes		|tmuxdir-release-notes|
 ==============================================================================
 INTRODUCTION						*tmuxdir-introduction*
 
-*tmuxdir* tmux session workspace plugin for nvim and vim.
+*tmuxdir* tmux session workspace plugin for nvim.
 
 ==============================================================================
 INSTALL							*tmuxdir-install*
 
-Note: tmuxdir requires denite.nvim, pynvim, nvim 0.3+ or Vim8+ and Python3.6+.
+Note: tmuxdir requires denite.nvim, pynvim, nvim 0.3+ and Python3.6+.
 
-tmuxdir.nvim was written primarily targeting nvim with its RPC interface. So,
-to be compatible with Vim8+ nvim-yarp and vim-hug-neovim-rpc are needed.
+tmuxdir.nvim was written primarily targeting nvim with its RPC interface.
 
 If you use dein:
 >
     call dein#add('viniarck/tmuxdir.nvim')
-    if !has('nvim')
-      call dein#add('roxma/nvim-yarp')
-      call dein#add('roxma/vim-hug-neovim-rpc')
-    endif
     call dein#add('Shougo/denite.nvim')
 <
 
 If you use vim-plug:
 >
-    if has('nvim')
-      Plug 'viniarck/tmuxdir.nvim', { 'do': ':UpdateRemotePlugins' }
-      Plug 'Shougo/denite.nvim'
-    else
-      Plug 'viniarck/tmuxdir.nvim'
-      Plug 'roxma/nvim-yarp'
-      Plug 'roxma/vim-hug-neovim-rpc'
-    endif
-      Plug 'Shougo/denite.nvim'
+    Plug 'viniarck/tmuxdir.nvim', { 'do': ':UpdateRemotePlugins' }
+    Plug 'Shougo/denite.nvim'
 <
 
 After installing, and restarting nvim/vim, you should be able invoke this function to confirm it's all set, you shouldn't see any errors being reported:
@@ -52,7 +40,7 @@ After installing, and restarting nvim/vim, you should be able invoke this functi
     :echo TmuxdirCheck()
 <
 
-Note: Make sure you have a recent version o pynvim
+Note: Make sure you have a recent version of pynvim
 >
     pip3 install --user --upgrade pynvim
 <
@@ -140,10 +128,13 @@ tmuxdir.nvim doesn't ship with any default key mappings, but the plugin's author
 ==============================================================================
 RELEASE NOTES						*tmuxdir-release-notes*
 
-2020-03-25 Released v1.0 with documentation.
-2020-08-02 Released g:tmuxdir_eager_mode option set as v:false
+2021-04-15
 
-On my machine, with g:tmuxdir_eager_mode it resulted in a 5x speed up:
+I'll have to drop support for vim 8+ because of the dependencies required aren't being maintained anymore and most users of this plugin use nvim. That will simplify the maintenance of this project and to keep the existing quality. So, if you want to use this plugin with vim, please use the version 1.1.
+
+2020-08-02
+
+Released g:tmuxdir_eager_mode option set as v:false. On my machine, with g:tmuxdir_eager_mode it resulted in a 5x speed up:
 
 ----------------------------------------------------------------------------------------- benchmark: 2 tests -----------------------------------------------------------------------------
 -----------
@@ -157,6 +148,10 @@ test_find_projects_v10_eager         19.3482 (5.66)     20.1614 (4.62)     19.61
           1
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -----------
+
+2020-03-25
+
+Released v1.0 with documentation.
 
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl:noet:fen:noet:
