@@ -9,7 +9,7 @@ from tmuxdir.util import expanduser_raise_if_not_dir, echoerr
 from typing import List
 
 
-class TmuxDirPlugin(object):
+class TmuxDirPlugin:
 
     """TmuxDirPlugin."""
 

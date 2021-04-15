@@ -72,7 +72,13 @@ class DirMngr:
                     (cur_depth - 1) * "*{}".format(os.path.sep), "*", marker
                 )
                 for d in pathlib.Path(os.path.expanduser(root_dir)).glob(expr):
-                    dirs.append(os.path.sep.join(str(d).split(os.path.sep)[:-1]))
+                    dirs.append(
+                        os.path.sep.join(
+                            str(d)
+                            .replace(str(pathlib.Path.home()), "~", 1)
+                            .split(os.path.sep)[:-1]
+                        )
+                    )
             if cur_depth == depth:
                 return dirs
             else:
@@ -93,7 +99,11 @@ class DirMngr:
         dirs = self.cfg_handler.load()
         if dirs:
             for key, attr in zip(
-                (self._DIRS_KEY, self._IGNORED_DIRS_KEY,), ("dirs", "ignored_dirs"),
+                (
+                    self._DIRS_KEY,
+                    self._IGNORED_DIRS_KEY,
+                ),
+                ("dirs", "ignored_dirs"),
             ):
                 if dirs.get(key):
                     loaded_dirs = dirs[key]

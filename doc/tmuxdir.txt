@@ -122,7 +122,20 @@ tmuxdir.nvim doesn't ship with any default key mappings, but the plugin's author
     nnoremap <silent> <A-n>  :<C-u>Denite -start-filter tmux_dir <cr>
     inoremap <silent> <A-n>  :<C-u>Denite -start-filter tmux_dir <cr>
     tnoremap <silent> <A-n>  <C-\><C-n> :<C-u>Denite -start-filter tmux_dir <cr>
-<
+
+
+Both denite open and new actions are used, so you'll also need to have them
+mapped, the author uses these mappings:
+
+
+    function! s:denite_my_settings() abort
+      nnoremap <silent><buffer><expr> <CR>
+      \ denite#do_map('do_action')
+      nnoremap <silent><buffer><expr> l
+      \ denite#do_map('do_action')
+      nnoremap <silent><buffer><expr> e
+      \ denite#do_map('do_action', 'new')
+    endfunction
 
 
 ==============================================================================
