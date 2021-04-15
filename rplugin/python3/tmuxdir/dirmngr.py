@@ -193,6 +193,6 @@ class DirMngr:
                 if not self.ignored_dirs.get(walked_dir):
                     dirs.add(walked_dir)
         for d in self.dirs:
-            if not self.ignored_dirs.get(walked_dir):
+            if not self.ignored_dirs.get(d):
                 dirs.add(d)
         return list(dirs)
