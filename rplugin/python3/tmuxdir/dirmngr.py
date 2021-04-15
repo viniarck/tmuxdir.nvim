@@ -59,7 +59,7 @@ class DirMngr:
                 return input_dir[:-1]
             return input_dir
 
-        def _find_projects(
+        def _rec_find_projects(
             dirs: List[str],
             root_dir: str,
             root_markers: List[str],
@@ -78,11 +78,11 @@ class DirMngr:
             else:
                 if dirs and not eager:
                     return dirs
-                return _find_projects(
+                return _rec_find_projects(
                     dirs, root_dir, root_markers, depth, cur_depth + 1
                 )
 
-        return _find_projects(dirs, _remove_path_sep(root_dir), root_markers, depth)
+        return _rec_find_projects(dirs, _remove_path_sep(root_dir), root_markers, depth)
 
     def _load_dirs(self) -> None:
         """Load persisted dirs."""

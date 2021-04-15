@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pynvim as vim
+import pynvim as nvim
 
 from tmuxdir.tmuxdir_facade import TmuxDirFacade, TmuxFacadeException
 from tmuxdir.dirmngr import DirMngr
@@ -13,15 +13,15 @@ class TmuxDirPlugin(object):
 
     """TmuxDirPlugin."""
 
-    def __init__(self, vim: vim.Nvim) -> None:
+    def __init__(self, nvim: nvim.Nvim) -> None:
         """Constructor of TmuxDirPlugin."""
-        self.vim = vim
+        self.nvim = nvim
         self.plugin_name = "tmuxdir"
 
-        # vim settings
-        self.root_markers: List[str] = self.vim.eval("TmuxdirRootMarkers()")
-        self.base_dirs: List[str] = self.vim.eval("TmuxdirBaseDirs()")
-        self._eager_mode: bool = self.vim.eval("TmuxdirEagerMode()")
+        # nvim settings
+        self.root_markers: List[str] = self.nvim.eval("TmuxdirRootMarkers()")
+        self.base_dirs: List[str] = self.nvim.eval("TmuxdirBaseDirs()")
+        self._eager_mode: bool = self.nvim.eval("TmuxdirEagerMode()")
 
         self.dir_mngr = DirMngr(
             base_dirs=self.base_dirs,
@@ -33,7 +33,7 @@ class TmuxDirPlugin(object):
         try:
             self.tmux_dir._check_tmux_bin()
         except TmuxFacadeException as e:
-            echoerr(self.vim, str(e), self.plugin_name)
+            echoerr(self.nvim, str(e), self.plugin_name)
 
     def tmuxdir_add(self, args: List) -> List[str]:
         root_dir = expanduser_raise_if_not_dir(args[0])
