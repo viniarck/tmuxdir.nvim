@@ -58,8 +58,9 @@ TmuxdirCheck()
 
 
 TmuxdirAdd({arg})
-		Add an {arg} directory to the project list. As long as this folder
-		has a root marker it's going to show up in the project directories.
+		Add an {arg} directory to the project list regardless or root
+		markers or not. It should be used when you don't have root
+		markers or just want to bookmark a directory.
 
 
 TmuxdirClearAdded({arg})

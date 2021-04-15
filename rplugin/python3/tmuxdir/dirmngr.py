@@ -185,16 +185,14 @@ class DirMngr:
 
     def list_dirs(self) -> List[str]:
         """Unique list non ignored directories based on root markers."""
-        base_dirs = []
-        if self._base_dirs:
-            base_dirs.extend(self._base_dirs)
-        if self.dirs:
-            base_dirs.extend(self.dirs.keys())
         dirs: Set[str] = set()
-        for input_dir in base_dirs:
+        for d in self._base_dirs:
             for walked_dir in self.find_projects(
-                input_dir, self._root_markers, eager=self._eager_mode
+                d, self._root_markers, eager=self._eager_mode
             ):
                 if not self.ignored_dirs.get(walked_dir):
                     dirs.add(walked_dir)
+        for d in self.dirs:
+            if not self.ignored_dirs.get(d):
+                dirs.add(d)
         return list(dirs)

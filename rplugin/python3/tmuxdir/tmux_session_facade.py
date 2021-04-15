@@ -20,7 +20,7 @@ class TmuxFacadeBinException(TmuxFacadeException):
         super().__init__(msg)
 
 
-class TmuxSession(object):
+class TmuxSession:
 
     """TmuxSession abstraction."""
 
@@ -38,7 +38,7 @@ class TmuxSession(object):
         )
 
 
-class TmuxSessionFacade(object):
+class TmuxSessionFacade:
 
     """Abstraction responsible for switching, listing and creating tmux
     sessions from nvim/vim.

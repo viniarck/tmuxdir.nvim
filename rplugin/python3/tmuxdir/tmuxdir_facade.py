@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Dict, List
+from typing import List
 from tmuxdir.tmux_session_facade import TmuxSessionFacade, TmuxFacadeException
-from tmuxdir.dirmngr import DirMngr, ProjectDir
-import os
+from tmuxdir.dirmngr import DirMngr
 
 
 class TmuxDirFacadeException(TmuxFacadeException):
