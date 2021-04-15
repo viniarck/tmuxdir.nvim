@@ -144,6 +144,13 @@ RELEASE NOTES						*tmuxdir-release-notes*
 
 2021-04-15
 
+Released v2.0
+
+Added support for `Denite` `action_new`, just so you can have additional
+workspaces (tmux session) mapped to the same project. For example, you could have one session just for source code editing or reading and another one just for executing process or other background shell related tasks.
+
+Augmented `TmuxdirAdd(directory)` to statically add a directory as a project. This enables you to bookmark some directory regardless of root markers. So, it's like an intermediary helper filling the gap for directories that don't have root markers yet. This is also handy if you have a monorepo and want to treat different folders there as different projects.
+
 I'll have to drop support for vim 8+ because of the dependencies required aren't being maintained anymore and most users of this plugin use nvim. That will simplify the maintenance of this project and to keep the existing quality. So, if you want to use this plugin with vim, please use the version 1.1.
 
 2020-08-02
