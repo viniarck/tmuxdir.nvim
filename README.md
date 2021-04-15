@@ -6,15 +6,16 @@ tmuxidir is a tmux session workspace plugin for nvim.
 
 ## tmuxdir workflow
 
-- Manage tmux sessions and projects from nvim.
+- You can manage tmux sessions and projects from nvim.
 - A project directory is identified with a root marker (folder or file) in a set of base directories (e.g.,`~/repos/`).
-- Each project is mapped to a tmux session. You can open additional tmux sessions to the same project if you want as well.
+- Each project is mapped to a tmux session, so a tmux session acts as a workspace.
+- You can have additional tmux sessions mapped to the same project if you want.
 
 ### Features
 
 - Denite source `tmux_session` for tmux sessions.
 - Denite source `tmux_dir` for tmux project directories.
-- Any folder can also be statically bookmarked as a project.
+- Any folder can also be statically bookmarked as a project `TmuxdirAdd(dir)`.
 - Automatically discover new projects once a root marker is found.
 
 ## Screencast
