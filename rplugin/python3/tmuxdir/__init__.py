@@ -40,7 +40,7 @@ class TmuxDirRPlugin:
             return []
         try:
             root_dir = expanduser_raise_if_not_dir(args[0])
-            return self._rplugin.tmux_dir.add(root_dir)
+            return [self._rplugin.tmux_dir._add(root_dir)]
         except OSError as e:
             echoerr(self._rplugin.nvim, str(e), self._rplugin.plugin_name)
             return []
