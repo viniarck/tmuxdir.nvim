@@ -55,6 +55,8 @@ class Kind(Openable):
                 new_session_name = f"{session_name}-{i}"
 
             if not self.tmux_dir.sessions().get(new_session_name):
+                if dir_path.endswith(f"-{i}"):
+                    dir_path = dir_path[:-len(f"-{i}")]
                 self.tmux_dir.create(
                     session_name=new_session_name,
                     vim_bin_path=self.vim_bin_path,
