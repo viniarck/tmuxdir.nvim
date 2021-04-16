@@ -15,7 +15,7 @@ class Kind(Openable):
 
     def action_open(self, context) -> None:
         """Switch to the first tmux selected session."""
-        session_name = context["targets"][0]["__session_name"]
+        session_name = context["targets"][0]["word"]
         try:
             self.tmuxf.switch(session_name=session_name)
         except TmuxFacadeException as e:
@@ -26,12 +26,12 @@ class Kind(Openable):
         if not util.confirm(
             self.vim,
             "Deleting tmux session(s) {}. Proceed?".format(
-                [session["__session_name"] for session in context["targets"]]
+                [session["word"] for session in context["targets"]]
             ),
         ):
             return
         for item in context["targets"]:
-            session_name = item["__session_name"]
+            session_name = item["word"]
             try:
                 self.tmuxf.kill(session_name=session_name)
             except TmuxFacadeException as e:
