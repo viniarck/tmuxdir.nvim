@@ -4,6 +4,12 @@ tmuxidir is a tmux session workspace plugin for nvim.
 
 ![tmuxdirlogo](https://lh3.googleusercontent.com/SYsERl-2msj8xkhf0m6oSJLorJESaE9yKKGNXZ9cfXYbYoJ9906bcCnGwB-xjgfAVWUtvL0KX7BujDlEmdD120nzhGiKHfaGqhbwR46fUsNIDvT07VALukCPq8G0nR2RlGzUT8K27sm1BwFZrwy3JMYRB3cKzvlNtWcQ4K-qZZxzyNP2rO-B0CyZPKSkP0zyfeotSguBTjFiMior_jc6tQjZD8jbsS9BWxiHsE_pkkDOhzlFWpC7PBPqXxP0zKn8CzGILu_mU8e_ODP4yC_YG-4kPm97XR-hnMbdW23EnKt7ygtvgg6oKsLSXggy5OjZP_zUb3y1cGr7us5so1sRq4WDZ7MKT1i4LUYhOwJ1Mbzb3QB1_OukRQaQUBG1aOvhTtzt2jUwPqgC-fYjyYkgp9h_Em0SUE5Uu665zG35jAjTq1193bgfxiGNty3Uo9vMNAWT9LjYPXsOsNLK6yXUlLKxBY2CJNv-7t0Lb6LDiFQ-LMYb8SoyByUDA9YR2mQIoO3zxf9tRvkhLh_2TNmab_R5Ut28OJnwoUl4pM3N1J3Ufe7eAyHo_haJc1bQPtpIqM-l7C1R-lqZpx_kjdzICgVchNZqBt06TLFyFoTgqhuiUNK2GGZ-IY6-XOyX6_88zmSkzdKEcLOlWwGR048jpTh-ktJLP1oi_1AhgPYxcnNHsYEDWM4juf83MTwZ240COu1t1h8Ga4VFioKjooRMFVQ2KkJt-8UJmUmxBcasaXenI84nUV4Frg=w500-h140-no)
 
+## Deprecation Notice
+
+`tmuxdir.nvim` is no longer actively maintained, you should use [`telescope-tmuxdir` instead](https://github.com/viniarck/telescope-tmuxdir.nvim).
+
+It turns out that `denite.nvim` is no longer actively maintained (and developed), so I've replaced it with `telescope`, which has a strong and active ecosystem of plugins.
+
 ## tmuxdir workflow
 
 - You can manage tmux sessions and projects from nvim.
